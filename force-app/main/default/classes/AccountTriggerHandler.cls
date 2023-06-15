@@ -1,11 +1,16 @@
+/**
+ * @description: This class is handler for Account trigger
+ */
 public class AccountTriggerHandler {
     
-    //Inserting a task when account is created.
-    public static void insertTaskWhenAccountIsAdded(List<Account> AccList){
+    /**
+     * @description: create a task when account is created.
+     */
+    public static void createTaskWhenAccountIsAdded(List<Account> accList){
         
         List<Task> taskListToInsert = new List<Task>();
         
-        for(Account accItem : AccList){
+        for(Account accItem : accList){
             Task accountTask = new Task();
             accountTask.Subject = 'Review Account- '+accItem.AccountNumber;
             accountTask.ActivityDate = system.today().addDays(7);
@@ -20,12 +25,14 @@ public class AccountTriggerHandler {
         }
     }
     
-    //Updating the releated task whenever Account is updated.
-    public static void updateTaskWhenAccountIsActivated(List<Account> AccList,Map<Id,Account> OldAccountMap){
+    /**
+     * @description: Updating the releated task whenever Account is updated.
+     */
+    public static void updateTaskWhenAccountIsActivated(List<Account> accList,Map<Id,Account> oldAccountMap){
         
         List<Task> taskListToUpdate = new List<Task>();
         Map<Id,List<Task>> accountTaskListMap = new Map<Id,List<Task>>();
-        List<Task> taskList = [Select id,Status,WhatId from Task Where WhatId IN: OldAccountMap.keySet()];
+        List<Task> taskList = [Select id,Status,WhatId from Task Where WhatId IN: oldAccountMap.keySet()];
         
         for(Task taskItem : taskList){
             if(taskItem.Status != 'Completed'){
@@ -41,8 +48,8 @@ public class AccountTriggerHandler {
             }
         }
         
-        for(Account accItem : AccList){
-            if(accItem.Active__c == true && OldAccountMap.get(accItem.Id).Active__c != accItem.Active__c){
+        for(Account accItem : accList){
+            if(accItem.Active__c == true && oldAccountMap.get(accItem.Id).Active__c != accItem.Active__c){
                 if(accountTaskListMap.get(accItem.Id) != null){
                     for(Task taskItem : accountTaskListMap.get(accItem.Id)){
                         Task taskItemUpdate = new Task();
@@ -53,6 +60,7 @@ public class AccountTriggerHandler {
                 }
             }
         }
+
         if(taskListToUpdate.size() > 0){
             update taskListToUpdate;
         }

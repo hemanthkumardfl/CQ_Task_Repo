@@ -5,8 +5,8 @@ public class AccountTriggerHandlerTest {
        
         Account testAccount = new Account(Name='Test Account',AccountNumber = '12456788',Active__c = false);
         insert testAccount;
-        
     }
+
     //Check Task is created or not when account is Inserted.
     static testMethod void InsertAccount(){
         Account Acc = [select Id,Name,Active__c from Account limit 1];
